@@ -29,14 +29,12 @@ end
 
 class AnalyticsInterface
 
-  attr_accessor :profile, :property, :oauth_token, :oauth_secret
+  attr_accessor :profile, :property
   
   def initialize(analytics_id, oauth_token, oauth_secret)
-    establish_garb_session
+    establish_garb_session(oauth_token, oauth_secret)
     self.property = Garb::Management::WebProperty.all.detect { |p| p.id == analytics_id }
     self.profile = Garb::Management::Profile.all.detect { |p| p.web_property_id == analytics_id }
-    self.oauth_token = oauth_token
-    self.oauth_secret = oauth_secret
   end
   
   def weekly_stats
@@ -87,7 +85,7 @@ private
     }
   end
 
-  def build_oauth_token
+  def build_oauth_token(oauth_token, oauth_secret)
     consumer = OAuth::Consumer.new('anonymous', 'anonymous', {
       :site => 'https://www.google.com',
       :request_token_path => '/accounts/OAuthGetRequestToken',
@@ -98,7 +96,7 @@ private
     OAuth::AccessToken.new(consumer, oauth_token, oauth_secret)
   end
   
-  def establish_garb_session
-    Garb::Session.access_token = build_oauth_token
+  def establish_garb_session(oauth_token, oauth_secret)
+    Garb::Session.access_token = build_oauth_token(oauth_token, oauth_secret)
   end
 end
