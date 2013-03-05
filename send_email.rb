@@ -3,6 +3,9 @@
 require 'action_mailer'
 require 'aws/ses'
 
+heroku_env = File.expand_path('config.rb', File.dirname(__FILE__))
+load(heroku_env) if File.exists?(heroku_env)
+
 require_relative 'lib/analytics_interface'
 require_relative 'lib/report_mailer'
 
